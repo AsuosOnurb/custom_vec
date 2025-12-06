@@ -15,6 +15,10 @@ namespace customvec
         Vector();
         Vector(const Vector &);            // Copy const.
         Vector &operator=(const Vector &); // Copy assign.
+
+        Vector(Vector &&other) noexcept;            // move constr.
+        Vector &operator=(Vector &&other) noexcept; // move assign.
+
         ~Vector();
 
         void push_back(int value);

@@ -56,6 +56,38 @@ namespace customvec
         return *this;
     }
 
+    Vector::Vector(Vector &&other) noexcept
+        : data_(other.data_), size_(other.size_), capacity_(other.capacity_)
+    {
+        other.data_ = nullptr;
+        other.size_ = 0;
+        other.capacity_ = 0;
+    }
+
+    Vector &Vector::operator=(Vector &&other) noexcept
+    {
+        // We check for this just because
+        if (this == &other)
+        {
+            return *this; // why would you do this though?
+        }
+
+        // Free current resources
+        delete[] data_;
+
+        // Take other's state
+        data_ = other.data_;
+        size_ = other.size_;
+        capacity_ = other.capacity_;
+
+        // Reset other's state
+        other.data_ = nullptr;
+        other.size_ = 0;
+        other.capacity_ = 0;
+
+        return *this;
+    }
+
     Vector::~Vector()
     {
         delete[] data_;

@@ -1,69 +1,57 @@
 #include <iostream>
+#include <utility> // std::move
 #include "customvec.hpp"
+
+void print_vec(const char *name, const customvec::Vector &v)
+{
+    std::cout << name << " (size=" << v.size()
+              << ", capacity=" << v.capacity() << "): ";
+
+    for (std::size_t i = 0; i < v.size(); ++i)
+    {
+        std::cout << v[i] << ' ';
+    }
+    std::cout << '\n';
+}
+
+customvec::Vector make_vector()
+{
+    customvec::Vector tmp;
+    for (int i = 0; i < 5; ++i)
+    {
+        tmp.push_back(i + 1);
+    }
+    return tmp; // will use move or NRVO
+}
 
 int main()
 {
+    std::cout << "=== Move constructor with std::move ===\n";
     customvec::Vector a;
     for (int i = 0; i < 5; ++i)
-    {
-        a.push_back(i + 1); // 1 2 3 4 5
-    }
+        a.push_back(i + 10); // 10 11 12 13 14
 
-    std::cout << "a: ";
-    for (std::size_t i = 0; i < a.size(); ++i)
-    {
-        std::cout << a[i] << ' ';
-    }
-    std::cout << "\n";
+    print_vec("a", a);
 
-    // ---- Test copy constructor ----
-    customvec::Vector b = a; // calls copy ctor
+    customvec::Vector b = std::move(a); // move constructor
 
-    std::cout << "b (copy of a): ";
-    for (std::size_t i = 0; i < b.size(); ++i)
-    {
-        std::cout << b[i] << ' ';
-    }
-    std::cout << "\n";
+    print_vec("a after move", a);
+    print_vec("b", b);
 
-    // modify a, b should stay unchanged
-    a[0] = 42;
-
-    std::cout << "After modifying a[0] = 42:\n";
-    std::cout << "a: ";
-    for (std::size_t i = 0; i < a.size(); ++i)
-    {
-        std::cout << a[i] << ' ';
-    }
-    std::cout << "\n";
-
-    std::cout << "b: ";
-    for (std::size_t i = 0; i < b.size(); ++i)
-    {
-        std::cout << b[i] << ' ';
-    }
-    std::cout << "\n";
-
-    // ---- Test copy assignment ----
+    std::cout << "\n=== Move assignment with std::move ===\n";
     customvec::Vector c;
-    c.push_back(100);
-    c.push_back(200);
+    for (int i = 0; i < 3; ++i)
+        c.push_back(100 + i); // 100 101 102
+    print_vec("c before", c);
 
-    std::cout << "c before assignment: ";
-    for (std::size_t i = 0; i < c.size(); ++i)
-    {
-        std::cout << c[i] << ' ';
-    }
-    std::cout << "\n";
+    c = std::move(b); // move assignment
 
-    c = a; // calls copy assignment
+    print_vec("b after move", b);
+    print_vec("c after c = std::move(b)", c);
 
-    std::cout << "c after c = a: ";
-    for (std::size_t i = 0; i < c.size(); ++i)
-    {
-        std::cout << c[i] << ' ';
-    }
-    std::cout << "\n";
+    std::cout << "\n=== Returning by value (RVO / move) ===\n";
+    customvec::Vector d = make_vector(); // will use RVO or move
+    print_vec("d", d);
 
     return 0;
 }
