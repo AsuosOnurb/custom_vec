@@ -2,6 +2,15 @@ cmake_minimum_required(VERSION 3.20)
 
 project(MyVectorProject LANGUAGES CXX)
 
+
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    message(STATUS "Configuring for Debug build")
+    
+    add_compile_definitions(MYVECTOR_DEBUG_BOUNDS)
+    message(STATUS "Bounds checking enabled")
+endif()
+
+
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)

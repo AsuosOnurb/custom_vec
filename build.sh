@@ -1,4 +1,9 @@
-mkdir -p build 
+#!/bin/bash
+
+# Usage: ./build.sh [Debug|Release]
+BUILD_TYPE=${1:-Release}
+
+mkdir -p build
 cd build
-cmake ..
+cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE ..
 cmake --build .

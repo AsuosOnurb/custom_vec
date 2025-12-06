@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <cassert>
 
 namespace customvec
 {
@@ -12,6 +13,8 @@ namespace customvec
         using value_type = int;
 
         Vector();
+        Vector(const Vector &);            // Copy const.
+        Vector &operator=(const Vector &); // Copy assign.
         ~Vector();
 
         void push_back(int value);
