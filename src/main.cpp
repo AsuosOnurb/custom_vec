@@ -1,8 +1,9 @@
 #include <iostream>
-#include <utility> // std::move
+#include <string>
 #include "customvec.hpp"
 
-void print_vec(const char *name, const customvec::Vector &v)
+template <typename T>
+void print_vec(const char *name, const customvec::Vector<T> &v)
 {
     std::cout << name << " (size=" << v.size()
               << ", capacity=" << v.capacity() << "): ";
@@ -14,44 +15,35 @@ void print_vec(const char *name, const customvec::Vector &v)
     std::cout << '\n';
 }
 
-customvec::Vector make_vector()
-{
-    customvec::Vector tmp;
-    for (int i = 0; i < 5; ++i)
-    {
-        tmp.push_back(i + 1);
-    }
-    return tmp; // will use move or NRVO
-}
-
 int main()
 {
-    std::cout << "=== Move constructor with std::move ===\n";
-    customvec::Vector a;
+    std::cout << "=== Vector<int> ===\n";
+    customvec::Vector<int> vi;
     for (int i = 0; i < 5; ++i)
-        a.push_back(i + 10); // 10 11 12 13 14
+    {
+        vi.push_back(i * 10);
+    }
+    print_vec("vi", vi);
 
-    print_vec("a", a);
+    std::cout << "\n=== Vector<std::string> ===\n";
+    customvec::Vector<std::string> vs;
+    vs.push_back("hello");
+    vs.push_back("world");
+    vs.push_back(std::string("from temp"));
 
-    customvec::Vector b = std::move(a); // move constructor
+    print_vec("vs", vs);
 
-    print_vec("a after move", a);
-    print_vec("b", b);
+    // test copy
+    customvec::Vector<std::string> vs_copy = vs;
+    vs[0] = "HELLO";
+    std::cout << "After modifying vs[0]:\n";
+    print_vec("vs", vs);
+    print_vec("vs_copy", vs_copy);
 
-    std::cout << "\n=== Move assignment with std::move ===\n";
-    customvec::Vector c;
-    for (int i = 0; i < 3; ++i)
-        c.push_back(100 + i); // 100 101 102
-    print_vec("c before", c);
-
-    c = std::move(b); // move assignment
-
-    print_vec("b after move", b);
-    print_vec("c after c = std::move(b)", c);
-
-    std::cout << "\n=== Returning by value (RVO / move) ===\n";
-    customvec::Vector d = make_vector(); // will use RVO or move
-    print_vec("d", d);
+    // test move
+    customvec::Vector<std::string> vs_moved = std::move(vs);
+    print_vec("vs after move", vs);
+    print_vec("vs_moved", vs_moved);
 
     return 0;
 }

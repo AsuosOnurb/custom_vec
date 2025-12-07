@@ -25,8 +25,10 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_compile_definitions(MYVECTOR_DEBUG_BOUNDS)
 endif()
 
-add_library(myvector STATIC src/customvec.cpp)
-target_include_directories(myvector PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+# Header-only library: use INTERFACE
+add_library(myvector INTERFACE)
+target_include_directories(myvector INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 add_executable(myvector_demo src/main.cpp)
 target_link_libraries(myvector_demo PRIVATE myvector)
